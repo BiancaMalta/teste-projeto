@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instala os pacotes Python listados no arquivo requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install Flask boto3 mysqlclient Flask-SQLAlchemy requests
 
 # Copia o restante do código fonte para o diretório de trabalho
 COPY . .
