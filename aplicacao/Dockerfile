@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Instala as dependências do Python
-RUN pip install Flask pymysql boto3
+RUN pip install -r requirements.txt
 
 # Copia os arquivos HTML para o diretório de templates dentro do contêiner
 COPY templates/upload.html /app/templates/upload.html
