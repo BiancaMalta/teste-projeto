@@ -4,11 +4,14 @@ FROM python:3.8-slim
 # Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o código Python para o diretório de trabalho no contêiner
-COPY . .
+# Copia o arquivo requirements.txt para o diretório de trabalho
+COPY requirements.txt .
 
-# Instala as dependências do Python
-RUN pip install Flask Jinja2 MarkupSafe PyMySQL boto3
+# Instala os pacotes Python listados no arquivo requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia o restante do código fonte para o diretório de trabalho
+COPY . .
 
 # Copia os arquivos HTML para o diretório de templates dentro do contêiner
 COPY templates/upload.html /app/templates/upload.html
