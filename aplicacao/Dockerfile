@@ -23,19 +23,13 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-# Instala as dependências do Python
-# Usa cache para evitar reinstalação de dependências não modificadas
-# e monta o arquivo requirements.txt para instalar as dependências listadas
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
-
-# Troca para o usuário não privilegiado antes de copiar o código do aplicativo
-# Isso é uma medida de segurança para reduzir os riscos de execução com privilégios elevados
-USER appuser
-
-# Copia o código Python e os templates HTML para o diretório de trabalho no contêiner
+# Copia os arquivos necessários para o diretório de trabalho no contêiner
 COPY . .
+
+# Instala as dependências do Python
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install --upgrade pip && \
+    python -m pip install -r requirements.txt
 
 # Cria um diretório para os templates HTML dentro do contêiner
 RUN mkdir -p /app/templates
@@ -46,8 +40,10 @@ COPY templates/login.html /app/templates/login.html
 COPY templates/reports.html /app/templates/reports.html
 
 # Expõe a porta 5000 do contêiner
-# Isso permite que o tráfego entre no contêiner através da porta 5000
 EXPOSE 5000
+
+# Define o usuário não privilegiado como o usuário padrão para execução do aplicativo
+USER appuser
 
 # Define o comando padrão para iniciar o aplicativo Flask
 CMD ["python", "app.py"]
