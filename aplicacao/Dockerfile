@@ -9,7 +9,7 @@ COPY . .
 
 # Instala as dependências do Python especificadas no arquivo requirements.txt
 RUN pip install Flask==1.1.2 \
-                Werkzeug==1.0.1 \
+                Jinja2==2.11.3 \
                 PyMySQL==1.0.2 \
                 boto3==1.18.41
 
