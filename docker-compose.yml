@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./aplicacao
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./aplicacao:/app
+    depends_on:
+      - db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: ada
+      MYSQL_PASSWORD: 123
+      MYSQL_DB: arquivos
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: senha_root
+      MYSQL_DATABASE: arquivos
+      MYSQL_USER: ada
+      MYSQL_PASSWORD: 123
