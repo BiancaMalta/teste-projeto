@@ -15,6 +15,9 @@ COPY templates/upload.html /app/templates/upload.html
 COPY templates/login.html /app/templates/login.html
 COPY templates/reports.html /app/templates/reports.html
 
+# Cria o diretório de uploads
+RUN mkdir -p /app/uploads
+
 # Aplica permissões totais à pasta de upload
 RUN chmod -R 777 /app/uploads
 
