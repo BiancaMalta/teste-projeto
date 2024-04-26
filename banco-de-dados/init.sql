@@ -16,3 +16,7 @@ CREATE TABLE IF NOT EXISTS Report (
 INSERT INTO Report (filename, username) VALUES ('relatorio1.pdf', 'admin');
 INSERT INTO Report (filename, username) VALUES ('relatorio2.pdf', 'usuario1');
 INSERT INTO Report (filename, username) VALUES ('relatorio3.pdf', 'usuario2');
+
+-- Concede permissões ao usuário 'ada' para acessar o banco de dados 'arquivos' localmente
+GRANT ALL PRIVILEGES ON arquivos.* TO 'ada'@'localhost';
+FLUSH PRIVILEGES;
