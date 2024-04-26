@@ -19,6 +19,8 @@ services:
 
   db:
     image: mysql:latest
+    volumes:
+      - ./my.cnf:/etc/mysql/my.cnf
     ports:
       - "3306:3306"
     environment:
