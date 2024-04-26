@@ -33,6 +33,7 @@ def get_db_connection():
 
 # Função para adicionar relatório ao banco de dados
 def add_report_to_database(filename, username):
+    connection = None
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
@@ -41,7 +42,8 @@ def add_report_to_database(filename, username):
     except Exception as e:
         print("Erro ao adicionar relatório ao banco de dados:", str(e))
     finally:
-        connection.close()
+        if connection:
+            connection.close()
 
 # Função para fazer upload de arquivo para o Amazon S3
 def upload_to_s3(file_name, bucket_name):
