@@ -8,6 +8,16 @@ FROM python:${PYTHON_VERSION}-slim as base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Instala as dependências necessárias, incluindo o Jinja2
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir Flask Jinja2 pymysql boto3
+
 # Define o diretório de trabalho no container
 WORKDIR /app
 
@@ -23,13 +33,8 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-# Copia os arquivos necessários para o diretório de trabalho no contêiner
+# Copia o código Python e os templates HTML para o diretório de trabalho no contêiner
 COPY . .
-
-# Instala as dependências do Python
-RUN --mount=type=cache,target=/root/.cache/pip \
-    python -m pip install --upgrade pip && \
-    python -m pip install -r requirements.txt
 
 # Cria um diretório para os templates HTML dentro do contêiner
 RUN mkdir -p /app/templates
@@ -39,11 +44,13 @@ COPY templates/upload.html /app/templates/upload.html
 COPY templates/login.html /app/templates/login.html
 COPY templates/reports.html /app/templates/reports.html
 
-# Expõe a porta 5000 do contêiner
-EXPOSE 5000
-
-# Define o usuário não privilegiado como o usuário padrão para execução do aplicativo
+# Troca para o usuário não privilegiado antes de copiar o código do aplicativo
+# Isso é uma medida de segurança para reduzir os riscos de execução com privilégios elevados
 USER appuser
+
+# Expõe a porta 5000 do contêiner
+# Isso permite que o tráfego entre no contêiner através da porta 5000
+EXPOSE 5000
 
 # Define o comando padrão para iniciar o aplicativo Flask
 CMD ["python", "app.py"]
