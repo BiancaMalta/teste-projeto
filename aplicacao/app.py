@@ -22,45 +22,42 @@ def allowed_file(filename):
 
 # Função para conectar ao banco de dados
 def get_db_connection():
-    return pymysql.connect(
-        host=app.config['MYSQL_HOST'],
-        user=app.config['MYSQL_USER'],
-        password=app.config['MYSQL_PASSWORD'],
-        db=app.config['MYSQL_DB'],
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    try:
+        connection = pymysql.connect(
+            host=app.config['MYSQL_HOST'],
+            user=app.config['MYSQL_USER'],
+            password=app.config['MYSQL_PASSWORD'],
+            db=app.config['MYSQL_DB'],
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        return connection
+    except Exception as e:
+        print("Erro ao conectar ao banco de dados:", str(e))
+        return None
 
 # Função para adicionar relatório ao banco de dados
 def add_report_to_database(filename, username):
-    connection = None
-    try:
-        connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO Report (filename, username) VALUES (%s, %s)", (filename, username))
-            connection.commit()
-    except Exception as e:
-        print("Erro ao adicionar relatório ao banco de dados:", str(e))
-    finally:
-        if connection:
+    connection = get_db_connection()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO Report (filename, username) VALUES (%s, %s)", (filename, username))
+                connection.commit()
+        except Exception as e:
+            print("Erro ao adicionar relatório ao banco de dados:", str(e))
+        finally:
             connection.close()
 
 # Função para fazer upload de arquivo para o Amazon S3
 def upload_to_s3(file_name, bucket_name):
-    """Upload a file to an S3 bucket
-
-    :param file_name: File to upload
-    :param bucket_name: Bucket to upload to
-    :return: True if file was uploaded, else False
-    """
-    # Upload the file
-    s3_client = boto3.client('s3')
     try:
+        s3_client = boto3.client('s3')
         response = s3_client.upload_file(file_name, bucket_name, file_name)
+        return True
     except Exception as e:
-        print(e)
+        print("Erro ao fazer upload para o Amazon S3:", str(e))
         return False
-    return True
 
 # Rota de login
 @app.route('/', methods=['GET', 'POST'])
@@ -73,12 +70,15 @@ def login():
             return 'Login inválido'
     return render_template('login.html')
 
+# Verifica se o usuário está autenticado em rotas protegidas
+def check_logged_in():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('login'))
+
 # Rota para fazer upload de arquivos
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if 'logged_in' not in session or not session['logged_in']:
-        return redirect(url_for('login'))
-    
+    check_logged_in()
     if request.method == 'POST':
         if 'file' not in request.files:
             return 'Nenhum arquivo selecionado'
@@ -92,60 +92,38 @@ def upload_file():
                 os.makedirs(app.config['UPLOAD_FOLDER'])
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # Upload para o Amazon S3
-            upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET'])
-            add_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
-            return redirect(url_for('reports'))  # Redireciona para a página de relatórios
+            if upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET']):
+                add_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
+                return redirect(url_for('reports'))  # Redireciona para a página de relatórios
+            else:
+                return 'Erro ao fazer upload do arquivo'
         else:
             return 'Tipo de arquivo não permitido'
     return render_template('upload.html')
 
-# Rota para adicionar relatório ao banco de dados
-@app.route('/add_report', methods=['POST'])
-def add_report():
-    if 'logged_in' not in session or not session['logged_in']:
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'Nenhum arquivo selecionado'
-        file = request.files['file']
-        if file.filename == '':
-            return 'Nenhum arquivo selecionado'
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            # Verifica se o diretório de upload existe, se não, cria-o
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Upload para o Amazon S3
-            upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET'])
-            add_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
-            return redirect(url_for('reports'))  # Redireciona para a página de relatórios
-        else:
-            return 'Tipo de arquivo não permitido'
-    else:
-        return 'Método não permitido'
-
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
 def reports():
-    connection = None
-    try:
-        connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM Report")
-            reports = cursor.fetchall()
-    except Exception as e:
-        print("Erro ao buscar relatórios no banco de dados:", str(e))
-        return "Erro ao buscar relatórios no banco de dados. Consulte os logs para mais detalhes."
-    finally:
-        if connection:
+    check_logged_in()
+    connection = get_db_connection()
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM Report")
+                reports = cursor.fetchall()
+                return render_template('reports.html', reports=reports)
+        except Exception as e:
+            print("Erro ao buscar relatórios no banco de dados:", str(e))
+            return "Erro ao buscar relatórios no banco de dados. Consulte os logs para mais detalhes."
+        finally:
             connection.close()
-    return render_template('reports.html', reports=reports)
+    else:
+        return "Erro ao conectar ao banco de dados."
 
 # Rota para download de arquivos
 @app.route('/download/<filename>')
 def download_file(filename):
+    check_logged_in()
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
