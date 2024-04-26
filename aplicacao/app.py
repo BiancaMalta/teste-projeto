@@ -100,6 +100,7 @@ def upload_file():
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
 def reports():
+    connection = None
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
@@ -109,7 +110,8 @@ def reports():
         print("Erro ao buscar relatórios no banco de dados:", str(e))
         return "Erro ao buscar relatórios no banco de dados. Consulte os logs para mais detalhes."
     finally:
-        connection.close()
+        if connection:
+            connection.close()
     return render_template('reports.html', reports=reports)
 
 # Rota para download de arquivos
