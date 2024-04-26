@@ -8,10 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Instala as dependências do Python
-RUN pip install Flask Jinja2 MarkupSafe PyMySQL boto3
-
-# Copia o restante do código fonte para o diretório de trabalho
-COPY . .
+RUN pip install Flask Jinja2 MarkupSafe PyMySQL boto3 python-dotenv
 
 # Copia os arquivos HTML para o diretório de templates dentro do contêiner
 COPY templates/upload.html /app/templates/upload.html
