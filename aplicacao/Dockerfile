@@ -5,12 +5,10 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copia o arquivo requirements.txt para o diretório de trabalho
-COPY requirements.txt .
+COPY . .
 
-# Instala os pacotes Python listados no arquivo requirements.txt
-RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
+# Instala as dependências do Python
+RUN pip install Flask Jinja2 MarkupSafe PyMySQL boto3
 
 # Copia o restante do código fonte para o diretório de trabalho
 COPY . .
