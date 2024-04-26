@@ -14,11 +14,20 @@ services:
       MYSQL_USER: ada
       MYSQL_PASSWORD: 123
       MYSQL_DB: arquivos
+    networks:
+      - my_network
 
   db:
     image: mysql:latest
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: senha_root
       MYSQL_DATABASE: arquivos
       MYSQL_USER: ada
       MYSQL_PASSWORD: 123
+    networks:
+      - my_network
+
+networks:
+  my_network:
