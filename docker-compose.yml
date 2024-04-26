@@ -4,7 +4,7 @@ services:
   app:
     build: ./aplicacao
     ports:
-      - "5000:5000"
+      - "0.0.0.0:5000"
     volumes:
       - ./aplicacao:/app
     depends_on:
