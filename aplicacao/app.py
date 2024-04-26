@@ -99,6 +99,33 @@ def upload_file():
             return 'Tipo de arquivo não permitido'
     return render_template('upload.html')
 
+# Rota para adicionar relatório ao banco de dados
+@app.route('/add_report', methods=['POST'])
+def add_report():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'Nenhum arquivo selecionado'
+        file = request.files['file']
+        if file.filename == '':
+            return 'Nenhum arquivo selecionado'
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            # Verifica se o diretório de upload existe, se não, cria-o
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.makedirs(app.config['UPLOAD_FOLDER'])
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # Upload para o Amazon S3
+            upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET'])
+            add_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
+            return redirect(url_for('reports'))  # Redireciona para a página de relatórios
+        else:
+            return 'Tipo de arquivo não permitido'
+    else:
+        return 'Método não permitido'
+
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
 def reports():
