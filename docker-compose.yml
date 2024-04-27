@@ -2,10 +2,7 @@ version: '3.3'
 
 networks:
   my_network:
-    ipam:
-        config:
-          - subnet: 172.31.20.240/16
-  
+
 services:
   db:
     build: 
@@ -19,9 +16,8 @@ services:
     env_file:
       - ./config/db.env
     networks:
-      my_network:
-        ipv4_address: 172.31.20.240
-  
+      - my_network  
+
   app:
     depends_on:
       - db
@@ -33,7 +29,8 @@ services:
       - ./uploads:/app/uploads
     env_file:
       - ./config/app.env
+    networks:
+      - my_network
 
-  
 volumes:
   mysql_data: {}
