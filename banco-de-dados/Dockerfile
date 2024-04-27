@@ -1,14 +1,13 @@
-# Use a imagem oficial do MySQL
+# Usa a imagem oficial do MySQL
 FROM mysql:latest
 
-# Copie o arquivo grant_permissions.sql para o diretório /docker-entrypoint-initdb.d/ no contêiner
+# Copia o script SQL para o diretório docker-entrypoint-initdb.d para que ele seja executado automaticamente na inicialização do contêiner MySQL
 COPY setup_database.sql /docker-entrypoint-initdb.d/
 
-# Copie o script SQL de inicialização para o diretório de inicialização do MySQL
-COPY init.sql /docker-entrypoint-initdb.d/
+# Define variáveis de ambiente para configurar o usuário e a senha do MySQL
+ENV MYSQL_DATABASE=arquivos
+ENV MYSQL_USER=ada
+ENV MYSQL_PASSWORD=123
 
-# Copie o arquivo de configuração personalizado para o diretório /etc/mysql/ no contêiner
-COPY my.cnf /etc/mysql/my.cnf
-
-# Exponha a porta do MySQL
+# Define a porta em que o MySQL estará acessível (opcional)
 EXPOSE 3306
