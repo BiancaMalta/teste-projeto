@@ -8,21 +8,18 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./uploads:/app/uploads
-      - ./config/app.env
-    env_file:
-      - ./config/app.env
-    volumes:
       - ./aplicacao:/app
+      - ./config/app.env
+      - ./uploads:/app/uploads
     networks:
       - my_network
   
   db:
     image: mysql:latest
     volumes:
+      - ./config/db.env
       - mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
-      - ./config/db.env
     ports:
       - "3306:3306"
     networks:
