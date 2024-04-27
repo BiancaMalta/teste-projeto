@@ -1,15 +1,23 @@
 # Usa a imagem oficial do Python
 FROM python:3.8-slim
 
-RUN apt-get update -y && \
-    apt-get install -y python3-pip python3-dev
+# Instala as dependências de build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libc-dev \
+    libmariadb-dev \
+    default-libmysqlclient-dev \
+    pkg-config
 
 # Define o diretório de trabalho no container
 WORKDIR /app
 
 # Copia o arquivo requirements.txt para o diretório de trabalho
+COPY requirements.txt .
+
+# Instala as dependências Python
 RUN pip install --upgrade pip
-RUN pip install Flask Werkzeug Jinja2 gunicorn click MarkupSafe PyMySQL flask-mysqldb boto3
+RUN pip install -r requirements.txt
 
 # Copie o restante dos arquivos da aplicação
 COPY . .
