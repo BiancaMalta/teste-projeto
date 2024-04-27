@@ -1,8 +1,8 @@
+import boto3
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import pymysql.cursors
-import boto3
 
 app = Flask(__name__)
 app.secret_key = "sua_chave_secreta"
@@ -14,7 +14,7 @@ app.config['MYSQL_HOST'] = '%'
 app.config['MYSQL_USER'] = 'ada'
 app.config['MYSQL_PASSWORD'] = '123'
 app.config['MYSQL_DB'] = 'arquivos'
-app.config['S3_BUCKET'] = 'projeto-ada-aws'  # Nome do bucket S3
+app.config['S3_BUCKET'] = 'projeto-teste-ada-aws'  # Nome do bucket S3
 
 # Função para verificar a extensão do arquivo
 def allowed_file(filename):
@@ -47,7 +47,7 @@ def insert_report_to_database(filename, username):
 
 # Função para fazer upload de arquivo para o Amazon S3
 def upload_to_s3(file_name, bucket_name):
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3', region_name='us-east-1')  # Define a região como us-east-1 (Norte da Virgínia)
     try:
         response = s3_client.upload_file(file_name, bucket_name, file_name)
     except Exception as e:
