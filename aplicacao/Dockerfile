@@ -5,10 +5,8 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copia o arquivo requirements.txt para o diretório de trabalho
-COPY requirements.txt .
-
-# Instala as dependências do Python
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app
+RUN pip install -r requirements.txt
 
 # Copie o restante dos arquivos da aplicação
 COPY . .
