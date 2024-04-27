@@ -9,6 +9,7 @@ WORKDIR /app
 
 # Copia o arquivo requirements.txt para o diretório de trabalho
 COPY requirements.txt /app
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Copie o restante dos arquivos da aplicação
