@@ -18,6 +18,7 @@ COPY requirements.txt .
 # Instala as dependências Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install cryptography
 
 # Copie o restante dos arquivos da aplicação
 COPY . .
