@@ -2,10 +2,11 @@
 CREATE USER IF NOT EXISTS 'ada'@'%';
 
 -- Concede todos os privilégios para o usuário 'ada' em todas as bases de dados e tabelas
-GRANT ALL PRIVILEGES ON *.* TO 'ada'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'ada'@'%';
 
 -- Atualiza as permissões
 FLUSH PRIVILEGES;
+
 -- Cria o banco de dados se não existir
 CREATE DATABASE IF NOT EXISTS arquivos;
 
