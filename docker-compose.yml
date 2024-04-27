@@ -2,34 +2,36 @@ version: '3.8'
 
 services:
   app:
+    depends_on:
+      - db
     build: ./aplicacao
     ports:
       - "5000:5000"
     volumes:
+      - ./uploads:/app/uploads 
+    env_file:
+      - ./config/app.env
+    volumes:
       - ./aplicacao:/app
-    depends_on:
-      - db
-    environment:
-      MYSQL_HOST: db
-      MYSQL_USER: ada
-      MYSQL_PASSWORD: 123
-      MYSQL_DB: arquivos
+    env_file:
+      - ./config/app.env
     networks:
       - my_network
-
+  
   db:
     image: mysql:latest
     volumes:
+      - mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: senha_root
-      MYSQL_DATABASE: arquivos
-      MYSQL_USER: ada
-      MYSQL_PASSWORD: 123
+    env_file:
+      - ./config/db.env
     networks:
       - my_network
-
+      
 networks:
   my_network:
+
+volumes:
+  mysql_data:
