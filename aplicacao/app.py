@@ -99,18 +99,19 @@ def upload_file():
 
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
-def reports():
+# Função para adicionar relatório ao banco de dados
+def add_report_to_database(filename, username):
+    connection = None  # Definindo connection como None antes do bloco try
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM Report")
-            reports = cursor.fetchall()
+            cursor.execute("INSERT INTO Report (filename, username) VALUES (%s, %s)", (filename, username))
+            connection.commit()
     except Exception as e:
-        print("Erro ao buscar relatórios no banco de dados:", str(e))
-        return "Erro ao buscar relatórios no banco de dados. Consulte os logs para mais detalhes."
+        print("Erro ao adicionar relatório ao banco de dados:", str(e))
     finally:
-        connection.close()
-    return render_template('reports.html', reports=reports)
+        if connection is not None:  # Verificando se connection é diferente de None antes de fechar
+            connection.close()
 
 # Rota para download de arquivos
 @app.route('/download/<filename>')
