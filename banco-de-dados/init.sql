@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS Report (
 );
 
 -- Insere alguns dados de exemplo na tabela de relatórios
-INSERT INTO Report (filename, username) VALUES ('relatorio1.pdf', 'admin');
-INSERT INTO Report (filename, username) VALUES ('relatorio2.pdf', 'usuario1');
-INSERT INTO Report (filename, username) VALUES ('relatorio3.pdf', 'usuario2');
+INSERT INTO Report
+  (filename, username)
+VALUES
+  ('relatorio1.pdf', 'admin'),
+  ('relatorio2.pdf', 'usuario1');
+
