@@ -17,9 +17,9 @@ services:
   db:
     image: mysql:latest
     volumes:
-      - ./config/db.env
       - mysql_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+      - ./config/db.env:/etc/config/db.env
     ports:
       - "3306:3306"
     networks:
