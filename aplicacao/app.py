@@ -1,3 +1,4 @@
+# Importe a função redirect do Flask
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from werkzeug.utils import secure_filename
 import os
@@ -32,7 +33,7 @@ def get_db_connection():
     )
 
 # Função para adicionar relatório ao banco de dados
-def add_report_to_database(filename, username):
+def insert_report_to_database(filename, username):
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
@@ -91,27 +92,17 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # Upload para o Amazon S3
             upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET'])
-            add_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
-            return redirect(url_for('reports'))  # Redireciona para a página de relatórios
+            insert_report_to_database(filename, 'admin')  # Adiciona o relatório ao banco de dados
+            return redirect(url_for('reports_page'))  # Redireciona para a página de relatórios
         else:
             return 'Tipo de arquivo não permitido'
     return render_template('upload.html')
 
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
-# Função para adicionar relatório ao banco de dados
-def add_report_to_database(filename, username):
-    connection = None  # Definindo connection como None antes do bloco try
-    try:
-        connection = get_db_connection()
-        with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO Report (filename, username) VALUES (%s, %s)", (filename, username))
-            connection.commit()
-    except Exception as e:
-        print("Erro ao adicionar relatório ao banco de dados:", str(e))
-    finally:
-        if connection is not None:  # Verificando se connection é diferente de None antes de fechar
-            connection.close()
+def reports_page():
+    # Adicione lógica aqui para exibir relatórios
+    return 'Página de relatórios'
 
 # Rota para download de arquivos
 @app.route('/download/<filename>')
