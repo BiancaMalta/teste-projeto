@@ -13,7 +13,6 @@ services:
     image: imagem-mysql:latest
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./my.cnf:/etc/mysql/my.cnf
     env_file:
       - ./config/db.env
     networks:
