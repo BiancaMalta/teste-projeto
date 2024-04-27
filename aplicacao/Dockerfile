@@ -8,7 +8,6 @@ RUN apt-get update -y && \
 WORKDIR /app
 
 # Copia o arquivo requirements.txt para o diretório de trabalho
-COPY requirements.txt /app
 RUN pip install --upgrade pip
 RUN pip install Flask Werkzeug Jinja2 gunicorn click MarkupSafe PyMySQL flask-mysqldb boto3
 
