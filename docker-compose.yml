@@ -1,20 +1,10 @@
-version: '3.8'
+version: '3.3'
 
+networks:
+  my_network:
+  
 services:
-  app:
-    depends_on:
-      - db
-    build: ./aplicacao
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./aplicacao:/app
-      - ./config/app.env
-      - ./uploads:/app/uploads
-    networks:
-      - my_network
-
-  db:
+   db:
     build: 
       context: banco-de-dados
       dockerfile: ./Dockerfile
@@ -27,9 +17,20 @@ services:
     env_file:
       - ./config/db.env
     networks:
-      - my_network    
-networks:
-  my_network:
+      - my_network  
+  app:
+    depends_on:
+      - db
+    build: ./aplicacao
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./aplicacao:/app
+      - ./config/app.env
+      - ./uploads:/app/uploads
+    networks:
+      - my_network
+  
 
 volumes:
-  mysql_data:
+  mysql_data: {}
