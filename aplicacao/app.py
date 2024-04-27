@@ -93,7 +93,7 @@ def upload_file():
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
 def reports_page():
-    return 'Página de relatórios'
+    return render_template('reports.html')
 
 # Rota para download de arquivos
 @app.route('/download/<filename>')
