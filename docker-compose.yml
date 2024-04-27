@@ -4,7 +4,7 @@ networks:
   my_network:
     ipam:
         config:
-          - subnet: 172.20.0.0/16
+          - subnet: 172.31.20.240/16
   
 services:
   db:
@@ -20,7 +20,7 @@ services:
       - ./config/db.env
     networks:
       my_network:
-        ipv4_address: 172.20.0.2
+        ipv4_address: 172.31.20.240
   
   app:
     depends_on:
