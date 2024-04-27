@@ -111,7 +111,7 @@ def reports():
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM Report")
                 reports = cursor.fetchall()
-                return render_template('reports.html', reports=reports)
+                return print('ok')
         except Exception as e:
             print("Erro ao buscar relatórios no banco de dados:", str(e))
             return "Erro ao buscar relatórios no banco de dados. Consulte os logs para mais detalhes."
