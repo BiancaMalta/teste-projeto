@@ -1,6 +1,9 @@
 # Usa a imagem oficial do MySQL
 FROM mysql:latest
 
+# Copia o arquivo de configuração personalizado my.cnf para o diretório de configuração do MySQL
+COPY my.cnf /etc/mysql/my.cnf
+
 # Copia o script SQL para o diretório docker-entrypoint-initdb.d para que ele seja executado automaticamente na inicialização do contêiner MySQL
 COPY setup_database.sql /docker-entrypoint-initdb.d/
 
