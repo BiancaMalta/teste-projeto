@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Instala as dependências do Python
-RUN pip install Flask Jinja2 MarkupSafe PyMySQL boto3 python-dotenv
+RUN pip install Flask Werkzeug Jinja2 MarkupSafe PyMySQL boto3 python-dotenv
 
 # Cria o diretório de uploads
 RUN mkdir -p /app/uploads
