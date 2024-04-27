@@ -93,7 +93,18 @@ def upload_file():
 # Rota para exibir os relatórios enviados
 @app.route('/reports')
 def reports_page():
-    return render_template('reports.html')
+    # Recupera os relatórios do banco de dados
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM Report")
+            reports = cursor.fetchall()
+            print("Relatórios recuperados do banco de dados:", reports)  # Imprime os relatórios recuperados
+    finally:
+        connection.close()
+    
+    # Passa os relatórios para o template HTML
+    return render_template('reports.html', reports=reports)
 
 # Rota para download de arquivos
 @app.route('/download/<filename>')
