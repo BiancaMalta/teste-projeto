@@ -85,7 +85,7 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             upload_to_s3(os.path.join(app.config['UPLOAD_FOLDER'], filename), app.config['S3_BUCKET'])
             insert_report_to_database(filename, 'admin')
-            return redirect(url_for('reports.html'))
+            return redirect(url_for('reports_page'))
         else:
             return 'Tipo de arquivo não permitido'
     return render_template('upload.html')
