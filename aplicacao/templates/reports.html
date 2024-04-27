@@ -64,15 +64,15 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Relatórios Enviados</h1>
-        <ul>
-            {% for report in reports %}
-            <li>
-                <span class="filename">{{ report.filename }}</span> - Enviado por: <span class="username">{{ report.username }}</span>
-            </li>
-            {% endfor %}
-        </ul>
+    <div class="upload-container">
+        <form method="post" enctype="multipart/form-data" action="/upload">
+            <label for="file"><h1>Selecione o arquivo:</h2></label>
+            <input type="file" id="file" name="file" required><br><br>
+            <div class="button-container">
+                <a href="/reports" class="reports-btn">Acessar Relatórios</a>
+                <input type="submit" value="Enviar">
+            </div>
+        </form>
     </div>
 </body>
 </html>
