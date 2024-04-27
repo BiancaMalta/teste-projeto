@@ -5,7 +5,7 @@ FROM mysql:latest
 COPY my.cnf /etc/mysql/my.cnf
 
 # Reinicia o servidor MySQL para aplicar as configurações
-RUN systemctl restart mysql
+RUN service mysql restart
 
 # Copia o script SQL para o diretório docker-entrypoint-initdb.d para que ele seja executado automaticamente na inicialização do contêiner MySQL
 COPY setup_database.sql /docker-entrypoint-initdb.d/
